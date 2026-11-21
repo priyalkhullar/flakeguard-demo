@@ -1,0 +1,21 @@
+name: flakeguard-post-merge
+
+# After a pull request is merged, scan the merged code and say what the scan found.
+# If the scan does not finish, the comment says so and shows no verdict.
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  post-merge:
+    if: ${{ github.event.pull_request.merged == true }}
+    # Same FlakeGuard version as flakeguard.yml; keep the two lines identical.
+    uses: vidipt9090/FlakeGuard/.github/workflows/scan.yml@c/eval3-console
+    with:
+      n_runs: 10
+      seed_start: 1
+      mode: post-merge

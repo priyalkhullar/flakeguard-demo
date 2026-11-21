@@ -1,0 +1,26 @@
+name: flakeguard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request to comment on (empty: no comment)"
+        type: string
+        default: ""
+
+# The reusable workflow may ask for no more than this.
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  scan:
+    # Which FlakeGuard runs. A branch while developing; a full commit SHA for the demo:
+    #   uses: vidipt9090/FlakeGuard/.github/workflows/scan.yml@<40-character commit SHA>
+    uses: vidipt9090/FlakeGuard/.github/workflows/scan.yml@c/eval3-console
+    with:
+      n_runs: 10
+      seed_start: 1 # the demo seeds are 1 to 10; seed 4 is the only failing one
+      pr_number: ${{ inputs.pr_number }}
