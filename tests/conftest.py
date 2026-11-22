@@ -14,3 +14,15 @@ def _fixed_seed_without_pytest_randomly(request):
     if not request.config.pluginmanager.hasplugin("randomly"):
         random.seed(0)
     yield
+
+
+import pytest
+import inventory.cache as _flakeguard_cache
+
+
+@pytest.fixture(autouse=True)
+def _flakeguard_restore_cache():
+    before = dict(_flakeguard_cache.CACHE)
+    yield
+    _flakeguard_cache.CACHE.clear()
+    _flakeguard_cache.CACHE.update(before)
